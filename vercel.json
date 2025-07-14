@@ -1,7 +1,7 @@
 {
   "functions": {
-    "api/products.js": {
-      "includeFiles": "data/stock.xls"
+    "api/api.js": {
+      "includeFiles": "api/stock.xls"
     }
   }
 }

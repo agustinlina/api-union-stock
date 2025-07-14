@@ -1,31 +1,35 @@
-const XLSX = require('xlsx')
-const path = require('path')
-const fs = require('fs')
+// api/api.js
+const XLSX = require('xlsx');
+const path = require('path');
+const fs = require('fs');
 
 module.exports = async (req, res) => {
   try {
-    const filePath = path.join(__dirname, 'stock.XLS')
+    // Ahora stock.xls está junto a este archivo
+    const filePath = path.join(__dirname, 'stock.xls');
+
     if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: 'stock.xls no encontrado en /data' })
-    }
-    const workbook = XLSX.readFile(filePath)
-    const sheetName = workbook.SheetNames[0]
-    const sheet = workbook.Sheets[sheetName]
-    const range = XLSX.utils.decode_range(sheet['!ref'])
-    const products = []
-
-    for (let row = 9; row <= range.e.r; row++) {
-      const codeCell = sheet[XLSX.utils.encode_cell({ c: 0, r: row })]
-      const code = codeCell ? codeCell.v : null
-      if (!code) break
-      const description =
-        sheet[XLSX.utils.encode_cell({ c: 2, r: row })]?.v || ''
-      const rubro = sheet[XLSX.utils.encode_cell({ c: 5, r: row })]?.v || ''
-      products.push({ code, description, rubro })
+      return res.status(404).json({ error: 'stock.xls no encontrado en api/' });
     }
 
-    res.status(200).json(products)
-  } catch (error) {
-    res.status(500).json({ error: error.message })
+    const workbook = XLSX.readFile(filePath);
+    const sheetName = workbook.SheetNames[0];
+    const sheet     = workbook.Sheets[sheetName];
+    const range     = XLSX.utils.decode_range(sheet['!ref']);
+    const products  = [];
+
+    // Empezar en fila 10 -> índice r = 9; columnas A=0, C=2, F=5
+    for (let r = 9; r <= range.e.r; r++) {
+      const codeCell = sheet[XLSX.utils.encode_cell({ c: 0, r })];
+      if (!codeCell || !codeCell.v) break;  // parar al primer vacío
+      const code        = codeCell.v;
+      const description = sheet[XLSX.utils.encode_cell({ c: 2, r })]?.v || '';
+      const rubro       = sheet[XLSX.utils.encode_cell({ c: 5, r })]?.v || '';
+      products.push({ code, description, rubro });
+    }
+
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-}
+};
