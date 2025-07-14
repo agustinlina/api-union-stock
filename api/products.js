@@ -4,7 +4,7 @@ const fs = require('fs')
 
 module.exports = async (req, res) => {
   try {
-    const filePath = path.join(__dirname, '..', 'data', 'stock.XLS')
+    const filePath = path.join(__dirname, 'stock.XLS')
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ error: 'stock.xls no encontrado en /data' })
     }
