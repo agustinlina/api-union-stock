@@ -1,0 +1,12 @@
+{
+  "name": "vercel-xls-api",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10",
+    "xlsx": "^0.18.5"
+  }
+}
